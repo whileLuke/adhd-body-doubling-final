@@ -152,17 +152,24 @@ const updateTaskStatus = (userId, taskId, newStatus) => {
 };
 
 // User registration/login endpoint
-app.post('/api/users/register', (req, res) => {
-  const { username } = req.body;
-  const userId = Date.now().toString() + Math.random().toString(36).substr(2, 9);
-  
-  initializeUser(userId, username);
-  
-  res.json({
-    success: true,
-    user: userData.users[userId],
-    userId: userId
-  });
+app.post('/api/users/register', async (req, res) => {
+  try {
+    const { username } = req.body;
+    
+    // Check if user already exists
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      return res.status(400).json({ error: 'User already exists' });
+    }
+    
+    // CREATE the new user
+    const newUser = new User({ username });
+    await newUser.save();
+    
+    res.status(201).json({ message: 'User created successfully', user: newUser });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 app.get('/', (req, res) => {
