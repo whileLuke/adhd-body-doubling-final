@@ -165,6 +165,10 @@ app.post('/api/users/register', (req, res) => {
   });
 });
 
+app.get('/', (req, res) => {
+  res.json({ message: 'API is running!' });
+});
+
 // Get user profile
 app.get('/api/users/:userId', (req, res) => {
   const { userId } = req.params;
