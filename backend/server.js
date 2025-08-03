@@ -12,13 +12,17 @@ const PORT = process.env.PORT || 5000;
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || '*', // Allow your frontend domain
+  credentials: true
+}));
 app.use(express.json());
 
-// Serve static files from React build (for production deployment)
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, 'build')));
-}
+// REMOVE THE STATIC FILE SERVING FOR SEPARATE SERVICES
+// DON'T serve static files when using separate frontend/backend
+// if (process.env.NODE_ENV === 'production') {
+//   app.use(express.static(path.join(__dirname, 'build')));
+// }
 
 // Enhanced data structure for multi-user support
 let userData = {
@@ -470,15 +474,17 @@ app.get('/api/garden/:userId/stats', (req, res) => {
   res.json({ stats });
 });
 
-// Serve React app for any route not handled by API (for production deployment)
-if (process.env.NODE_ENV === 'production') {
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'build', 'index.html'));
-  });
-}
+// REMOVE THE CATCH-ALL ROUTE FOR SEPARATE SERVICES
+// Don't serve React app from backend when using separate services
+// if (process.env.NODE_ENV === 'production') {
+//   app.get('*', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'build', 'index.html'));
+//   });
+// }
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`Make sure to set GEMINI_API_KEY in your environment variables`);
+  console.log(`✅ Backend server running on port ${PORT}`);
+  console.log(`✅ Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`✅ CORS enabled for all origins`);
+  console.log(`✅ Gemini API Key: ${process.env.GEMINI_API_KEY ? 'Set' : 'NOT SET!'}`);
 });
