@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || window.location.origin;
+const API_BASE_URL = 'https://adhd-body-doubling-final-production.up.railway.app/';  // process.env.REACT_APP_API_URL || window.location.origin;
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
